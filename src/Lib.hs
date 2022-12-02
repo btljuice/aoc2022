@@ -1,5 +1,5 @@
 module Lib
-  ( pal,
+  ( palindrome,
     someFunc,
   )
 where
@@ -7,7 +7,7 @@ where
 someFunc :: IO ()
 someFunc = putStrLn "someFunc"
 
-pal :: String -> Bool
-pal xs
+palindrome :: String -> Bool
+palindrome xs
   | xs == reverse xs = True
   | otherwise = False
