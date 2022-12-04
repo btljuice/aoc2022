@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Day1
+      Day2
       Lib
   other-modules:
       Paths_aoc2022_haskell
@@ -34,7 +35,9 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , directory
     , hspec
+    , split
   default-language: Haskell2010
 
 executable aoc2022-haskell-exe
@@ -47,7 +50,9 @@ executable aoc2022-haskell-exe
   build-depends:
       aoc2022-haskell
     , base >=4.7 && <5
+    , directory
     , hspec
+    , split
   default-language: Haskell2010
 
 test-suite aoc2022-haskell-test
@@ -57,6 +62,7 @@ test-suite aoc2022-haskell-test
       test
   other-modules:
       Day1Spec
+      Day2Spec
       LibSpec
       Paths_aoc2022_haskell
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
@@ -65,6 +71,8 @@ test-suite aoc2022-haskell-test
     , QuickCheck
     , aoc2022-haskell
     , base >=4.7 && <5
+    , directory
     , hspec
     , hspec-discover
+    , split
   default-language: Haskell2010
