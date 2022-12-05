@@ -15,6 +15,11 @@ sampleData = [
   (P, R),
   (S, S) ]
 
+sampleData2 = [
+  (R, D),
+  (P, L),
+  (S, W) ]
+
 spec :: Spec
 spec = do
   describe "readBout" $ do
@@ -24,14 +29,12 @@ spec = do
     it "returns correct number of point on sampleData" $ do
       gamePoints sampleData `shouldBe` 15
 
-  describe "readRPS" $ do
-    it "returns R" $ do
-      readRPS "A" `shouldBe` R
-      readRPS "X" `shouldBe` R
-    it "returns P" $ do
-      readRPS "B" `shouldBe` P
-      readRPS "Y" `shouldBe` P
-    it "returns S" $ do
-      readRPS "C" `shouldBe` S
-      readRPS "Z" `shouldBe` S
+
+  describe "readBout2" $ do
+    it "converts sampleDataString to sampleData2" $ do
+      map readBout2 sampleDataString `shouldBe` sampleData2
+  describe "gamePoints2" $ do
+    it "returns correct number of point on sampleData2" $ do
+      gamePoints2 sampleData2 `shouldBe` 12
+
 
