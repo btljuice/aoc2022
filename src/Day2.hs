@@ -1,11 +1,23 @@
 module Day2
   ( readRPS,
-    setPoints,
+    readBout,
+    gamePoints,
+    -- (..) to import "data constructor"s
     RPS (..)
   )
 where
 
-data RPS = R | P | S
+data RPS = R | P | S deriving (Eq, Show)
+
+onlyTwoWords :: String -> (String, String)
+onlyTwoWords l = case words l of
+  [a, b] -> (a, b)
+  _ -> error $ "Line as not 2 words :" ++ show l
+
+readBout :: String -> (RPS, RPS)
+readBout line = (readRPS l, readRPS r)
+  where (l, r) = onlyTwoWords line
+
 
 readRPS :: String -> RPS
 readRPS "A" = R
@@ -17,24 +29,24 @@ readRPS "Z" = S
 readRPS s = error ("Not a valid RPS character: " ++ s)
 
 winPoints :: RPS -> RPS -> Int
-winPoints R S = 6
+winPoints S R = 6
 winPoints R R = 3
-winPoints R P = 0
-winPoints P R = 6
+winPoints P R = 0
+winPoints R P = 6
 winPoints P P = 3
-winPoints P S = 0
-winPoints S P = 6
+winPoints S P = 0
+winPoints P S = 6
 winPoints S S = 3
-winPoints S R = 0
+winPoints R S = 0
 
 shapePoints :: RPS -> Int
 shapePoints R = 1
 shapePoints P = 2
 shapePoints S = 3
 
-gamePoints :: RPS -> RPS -> Int
-gamePoints l r = winPoints l r + shapePoints l
+boutPoints :: RPS -> RPS -> Int
+boutPoints l r = winPoints l r + shapePoints r
 
 
-setPoints :: [(RPS, RPS)] -> Int
-setPoints = sum . map (uncurry gamePoints)
+gamePoints :: [(RPS, RPS)] -> Int
+gamePoints = sum . map (uncurry boutPoints)

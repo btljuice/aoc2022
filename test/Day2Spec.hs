@@ -4,7 +4,7 @@ import Test.Hspec
 import Prelude
 import Day2
 
-sampleDataString = unlines [
+sampleDataString = [
  "A Y",
  "B X",
  "C Z" ]
@@ -17,7 +17,21 @@ sampleData = [
 
 spec :: Spec
 spec = do
-  describe "setPoints" $ do
+  describe "readBout" $ do
+    it "converts sampleDataString to sampleData" $ do
+      map readBout sampleDataString `shouldBe` sampleData
+  describe "gamePoints" $ do
     it "returns correct number of point on sampleData" $ do
-      setPoints sampleData `shouldBe` 15
+      gamePoints sampleData `shouldBe` 15
+
+  describe "readRPS" $ do
+    it "returns R" $ do
+      readRPS "A" `shouldBe` R
+      readRPS "X" `shouldBe` R
+    it "returns P" $ do
+      readRPS "B" `shouldBe` P
+      readRPS "Y" `shouldBe` P
+    it "returns S" $ do
+      readRPS "C" `shouldBe` S
+      readRPS "Z" `shouldBe` S
 
