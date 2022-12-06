@@ -16,6 +16,7 @@ dependencies:
   - hspec
   - split
   - directory
+  - containers
 ghc-options:
   - '-Wall'
   - '-Wcompat'
@@ -38,6 +39,7 @@ executables:
       - '-with-rtsopts=-N'
     dependencies:
       - aoc2022-haskell
+      - containers
 tests:
   aoc2022-haskell-test:
     main: Spec.hs

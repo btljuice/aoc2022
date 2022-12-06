@@ -4,6 +4,7 @@ import Prelude
 import System.Directory
 import Day1
 import Day2
+import Day3
 
 readLines :: FilePath -> IO [String]
 readLines = fmap lines . readFile
@@ -24,6 +25,11 @@ day2Solution = do
   putStrLn $ "day2 part 1 = " ++ show points
   putStrLn $ "day2 part 2 = " ++ show points2
 
+day3Solution = do
+  ls <- readLines "day3.txt"
+  putStrLn $ "day3 part 1 = " ++ show (day3Part1 ls)
+  putStrLn $ "day3 part 2 = " ++ show (day3Part2 ls)
+
 
 
 
@@ -32,4 +38,5 @@ main = do
   cwd <- getCurrentDirectory
   putStrLn $ "current directory" ++ show cwd
   -- day1Solution
-  day2Solution
+  -- day2Solution
+  day3Solution
