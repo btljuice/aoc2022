@@ -7,7 +7,9 @@ import Day2
 import Day3
 import Day4
 import Day5
+import Day6
 import qualified Day5 as PermutationOrder
+
 
 readLines :: FilePath -> IO [String]
 readLines = fmap lines . readFile
@@ -44,6 +46,12 @@ day5Solution = do
   putStrLn $ "day5 part 1 = " ++ show (day5 PermutationOrder.Inverted ls day5InitialCrates)
   putStrLn $ "day5 part 2 = " ++ show (day5 PermutationOrder.Same ls day5InitialCrates)
 
+day6Solution = do
+  ls <- readLines "day6.txt"
+  let content = head ls
+  putStrLn $ "day6 part 1 = " ++ show (firstMarkerPos 4 content)
+  putStrLn $ "day6 part 2 = " ++ show (firstMarkerPos 14 content)
+
 
 
 main :: IO ()
@@ -54,4 +62,5 @@ main = do
   -- day2Solution
   -- day3Solution
   -- day4Solution
-  day5Solution
+  -- day5Solution
+  day6Solution
