@@ -17,6 +17,8 @@ dependencies:
   - split
   - directory
   - containers
+  - array
+  - regex-tdfa
 ghc-options:
   - '-Wall'
   - '-Wcompat'
