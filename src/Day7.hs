@@ -71,7 +71,7 @@ splitCommands = split (keepDelimsL . dropInitBlank $ whenElt (isPrefixOf "$ "))
 readCommand :: [String] -> Command
 readCommand ("$ ls":listing) = Ls . map readFileOrDir $ listing
 readCommand ["$ cd .."] = CdUp
-readCommand [str] = CdDown . head . submatches "$ cd ([[:word:]]+)" $ str
+readCommand [str] = CdDown . head . submatches "\\$ cd ([[:word:]\\.]+)" $ str
 readCommand rest = error $ "Not a valid command" ++ show rest
 
 readFileOrDir :: String -> FileOrDir

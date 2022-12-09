@@ -30,31 +30,6 @@ commandStrings = [
   "5626152 d.ext",
   "7214296 k" ]
 
-splittedCommandStrings :: [[String]]
-splittedCommandStrings = [
-  [ "$ ls",
-    "dir a",
-    "14848514 b.txt",
-    "8504156 c.dat",
-      "dir d" ],
-  [ "$ cd a" ],
-  [ "$ ls",
-    "dir e",
-    "29116 f",
-    "2557 g",
-    "62596 h.lst" ],
-  [ "$ cd e" ],
-  [ "$ ls",
-    "584 i" ],
-  [ "$ cd .." ],
-  [ "$ cd .." ],
-  [ "$ cd d" ],
-  [ "$ ls",
-    "4060174 j",
-    "8033020 d.log",
-    "5626152 d.ext",
-    "7214296 k" ] ]
-
 commandsParsed :: [Command]
 commandsParsed = [
   Ls [
@@ -83,17 +58,16 @@ commandsParsed = [
 
 spec :: Spec
 spec = do
-  describe "splitCommands" $ do
-    it "splits commandsStr into splitCommandsStr" $ do
-      splitCommands commandStrings `shouldBe` splittedCommandStrings
-
-  describe "readCommands one by one" $ do
-    it "convert splitCommandsStr to splittedCommandStrings" $ do
-      map readCommand (take 1 splittedCommandStrings) `shouldBe` take 1 commandsParsed
   describe "readCommands" $ do
     it "converts commandsStr into commandsParsed" $ do
-      readCommands (tail commandStrings) `shouldBe` commandsParsed
-  -- describe "sliding" $ do
-  --   it "dirsWith on sampled command should return 95437" $ do
-  --     dirsWith (<= 100000) commandsParsed `shouldBe` 95437
+      readCommands commandStrings `shouldBe` commandsParsed
+
+  describe "dirsWith" $ do
+    it "dirsWith on sampled command should return 95437" $ do
+      dirsWith (<= 100000) commandsParsed `shouldBe` 95437
+
+  describe "compute sample part 1" $ do
+    it "dirsWith on sampled command should return 95437" $ do
+      dirsWith (<= 100000) (readCommands commandStrings) `shouldBe` 95437
+
 
