@@ -54,7 +54,7 @@ day7part1 = dirsWith 0 accFnc . readCommands
 
 day7part2 :: [String] -> Int
 day7part2 = dirsWith 70000000 accFnc . readCommands
-  where accFnc acc cwdSize = if (cwdSize >= 8381165 && cwdSize < acc) then cwdSize else acc
+  where accFnc acc cwdSize = if cwdSize < 8381165 then acc else min cwdSize acc
 
 day7AllValues :: [String] -> [Int]
 day7AllValues = dirsWith [] accFnc . readCommands

@@ -32,6 +32,7 @@ library
       Day5
       Day6
       Day7
+      Day8
       Lib
   other-modules:
       Paths_aoc2022_haskell
@@ -79,6 +80,7 @@ test-suite aoc2022-haskell-test
       Day5Spec
       Day6Spec
       Day7Spec
+      Day8Spec
       LibSpec
       Paths_aoc2022_haskell
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
