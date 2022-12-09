@@ -2,6 +2,7 @@ module Day7 (
   Command (..),
   FileOrDir (..),
   dirsWith,
+  day1part1,
   splitCommands,
   readCommands,
   readCommand,
@@ -36,26 +37,33 @@ fst3 (x, _, _) = x
 -- Observation: A cursory glance at day 7 input is a depth-first search traversal
 
 -- |Returns the sum of all directory with size >=
-dirsWith :: (Int -> Bool)    -- ^ the predicate function to include the directory or not
-         -> [Command]        -- ^ commands left to execute
-         -> Int              -- ^ Total size of all directories accepted by the predicate
-                             --   Commands left to execute
-dirsWith p cmds = fst3 (_dirsWith 0 0 p cmds)
+dirsWith :: a
+         -> (a -> Int -> a)    -- ^ the predicate function to include the directory or not
+         -> [Command]          -- ^ commands left to execute
+         -> a                  -- ^ Total size of all directories accepted by the predicate
+                               --   Commands left to execute
+dirsWith acc0 p cmds = fst3 (_dirsWith acc0 0 p cmds)
 
 
-_dirsWith :: Int -- ^ Accumulated sum respecting predicate
+day1part1 :: [String] -> Int
+day1part1 = dirsWith 0 accFnc . readCommands
+  where accFnc acc cwdSize = acc + or0 cwdSize
+        or0 i = if i <= 100000 then i else 0
+
+
+-- acc + or0 p cwdSize
+
+_dirsWith :: a -- ^ Accumulated sum respecting predicate
           -> Int -- ^ Current size of directory
-          -> (Int -> Bool)
+          -> (a -> Int -> a)
           -> [Command]
-          -> (Int, Int, [Command])
-_dirsWith acc cwdSize p [] = (acc + or0 p cwdSize, cwdSize, [])
-_dirsWith acc cwdSize p (CdUp : remainings) = (acc + or0 p cwdSize, cwdSize, remainings)
+          -> (a, Int, [Command])
+_dirsWith acc cwdSize p [] = (p acc cwdSize, cwdSize, [])
+_dirsWith acc cwdSize p (CdUp : remainings) = (p acc cwdSize, cwdSize, remainings)
 _dirsWith acc cwdSize p (CdDown _ : remainings) = _dirsWith newAcc (cwdSize + dirSize) p newRemainings
   where (newAcc, dirSize, newRemainings) = _dirsWith acc 0 p remainings
 _dirsWith acc cwdSize p (Ls listing : remainings) = _dirsWith acc (cwdSize + totalSize listing) p remainings
 
-or0 :: (Int -> Bool) -> Int -> Int
-or0 p i = if p i then i else 0
 
 totalSize :: [FileOrDir] -> Int
 totalSize = sum . map sizeOf
@@ -79,3 +87,8 @@ readFileOrDir str
   | "dir " `isPrefixOf` str = Dir . drop 4 $ str
   | otherwise = File (read size) filename
      where (size, filename) = onlyTwoWords str
+
+
+-- Part 2
+-- Total disk space available 70000000
+-- Need at least 30000000

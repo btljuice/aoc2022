@@ -64,10 +64,6 @@ spec = do
 
   describe "dirsWith" $ do
     it "dirsWith on sampled command should return 95437" $ do
-      dirsWith (<= 100000) commandsParsed `shouldBe` 95437
-
-  describe "compute sample part 1" $ do
-    it "dirsWith on sampled command should return 95437" $ do
-      dirsWith (<= 100000) (readCommands commandStrings) `shouldBe` 95437
+      day1part1 commandStrings `shouldBe` 95437
 
 

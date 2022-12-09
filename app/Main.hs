@@ -8,6 +8,7 @@ import Day3
 import Day4
 import Day5
 import Day6
+import Day7
 import qualified Day5 as PermutationOrder
 
 
@@ -52,6 +53,10 @@ day6Solution = do
   putStrLn $ "day6 part 1 = " ++ show (firstMarkerPos 4 content)
   putStrLn $ "day6 part 2 = " ++ show (firstMarkerPos 14 content)
 
+day7Solution = do
+  ls <- readLines "day7.txt"
+  putStrLn $ "day7 part 1 = " ++ (show . day1part1 $ tail ls)
+
 
 
 main :: IO ()
@@ -63,4 +68,5 @@ main = do
   -- day3Solution
   -- day4Solution
   -- day5Solution
-  day6Solution
+  -- day6Solution
+  day7Solution
