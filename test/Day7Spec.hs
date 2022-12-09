@@ -62,8 +62,14 @@ spec = do
     it "converts commandsStr into commandsParsed" $ do
       readCommands commandStrings `shouldBe` commandsParsed
 
-  describe "dirsWith" $ do
-    it "dirsWith on sampled command should return 95437" $ do
-      day1part1 commandStrings `shouldBe` 95437
+  describe "day7part1" $ do
+    it "day1part1 on sampled command should return 95437" $ do
+      day7part1 commandStrings `shouldBe` 95437
+
+  describe "day7part2" $ do
+    it "day7part2 on sampled command should return 24933642" $ do
+      day7part2 commandStrings `shouldBe` 24933642
+
+
 
 

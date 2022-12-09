@@ -10,6 +10,9 @@ import Day5
 import Day6
 import Day7
 import qualified Day5 as PermutationOrder
+import Day7 (day7AllValues)
+
+import Data.List(sort)
 
 
 readLines :: FilePath -> IO [String]
@@ -55,7 +58,9 @@ day6Solution = do
 
 day7Solution = do
   ls <- readLines "day7.txt"
-  putStrLn $ "day7 part 1 = " ++ (show . day1part1 $ tail ls)
+  putStrLn $ "day7 part 1 = " ++ (show . day7part1 $ tail ls)
+  putStrLn $ "day7 part 2 = " ++ (show . day7part2 $ tail ls)
+  putStrLn $ "day7 all values = " ++ show [s | s <- sort (day7AllValues (tail ls)) , s >= 8381165]
 
 
 

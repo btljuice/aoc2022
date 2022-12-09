@@ -2,7 +2,9 @@ module Day7 (
   Command (..),
   FileOrDir (..),
   dirsWith,
-  day1part1,
+  day7part1,
+  day7part2,
+  day7AllValues,
   splitCommands,
   readCommands,
   readCommand,
@@ -45,10 +47,18 @@ dirsWith :: a
 dirsWith acc0 p cmds = fst3 (_dirsWith acc0 0 p cmds)
 
 
-day1part1 :: [String] -> Int
-day1part1 = dirsWith 0 accFnc . readCommands
+day7part1 :: [String] -> Int
+day7part1 = dirsWith 0 accFnc . readCommands
   where accFnc acc cwdSize = acc + or0 cwdSize
         or0 i = if i <= 100000 then i else 0
+
+day7part2 :: [String] -> Int
+day7part2 = dirsWith 70000000 accFnc . readCommands
+  where accFnc acc cwdSize = if (cwdSize >= 8381165 && cwdSize < acc) then cwdSize else acc
+
+day7AllValues :: [String] -> [Int]
+day7AllValues = dirsWith [] accFnc . readCommands
+  where accFnc acc cwdSize = cwdSize:acc
 
 
 -- acc + or0 p cwdSize
