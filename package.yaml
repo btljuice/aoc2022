@@ -19,6 +19,7 @@ dependencies:
   - containers
   - array
   - regex-tdfa
+  - scanf
 ghc-options:
   - '-Wall'
   - '-Wcompat'
