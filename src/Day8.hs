@@ -1,11 +1,19 @@
 module Day8(
-
-readHeightMap) where
+  readHeightMap,
+  countVisible,
+  isVisible,
+  isInbound,
+  tallest,
+  visibleFrom,
+  day8part1,
+  Dir(..),
+) where
 
 import GHC.Arr (listArray, Array(..))
 import Data.Char (digitToInt)
-import Data.Array (bounds)
-import Data.Array ((!))
+import Data.Array ( bounds, (!), indices )
+import Prelude hiding (Left, Right)
+import qualified Data.Foldable
 
 
 --- rectangular height map of [0, 9]
@@ -14,47 +22,80 @@ import Data.Array ((!))
 
 type Coord = (Int, Int)
 type HeightMap = Array Coord Int
+type Iterator a = [a]
+data Dir = Up | Down | Left | Right deriving (Enum, Show, Eq)
 
 readHeightMap :: [String] -> HeightMap
-readHeightMap rows = listArray ((1, 1), (h, w)) . concatMap toDigits $ rows
+readHeightMap rows = listArray ((1, 1), (nbRows, nbCols)) . concatMap toDigits $ rows
   where toDigits = map digitToInt
-        w = length . head $ rows
-        h = length rows
+        nbCols = length . head $ rows
+        nbRows = length rows
 
--- tallest :: HeightMap -> Dir -> Int
-tallest hm delta c@(1, _) =
-  -- is out-of-bound then return value
+day8part1 = countVisible. readHeightMap
+
+countVisible :: HeightMap -> Int
+countVisible hm = sum [ fromEnum (isVisible hm c) | c <- indices hm ]
+
+-- ANSWER ME : How lazy can we be ?
+-- What is the lifetime / scope that Haskell retains in memory a previously
+-- evaluated expression ?
+-- otherwise we'll memoize the tallest heights
+
+tallest :: HeightMap -> Iterator Coord -> Int
+tallest hm ite
+  | isInbound hm coord = max height (tallest hm (tail ite))
+  | otherwise = minBound :: Int
+  where coord  = head ite
+        height = hm ! coord
 
 isVisible :: HeightMap -> Coord -> Bool
-isVisible _ (1, _) = True -- First Column
-isVisible _ (_, 1) = True -- First Row
-isVisible hm coord@(i, j)
-  | i == fst (snd (bounds hm)) = True -- Last Column
-  | j == snd (snd (bounds hm)) = True -- Last Row
-  | otherwise = h > h_up isVisible hm (i-1) j    ||
-                isVisible hm  i   (j-1) ||
-                isVisible hm  i   (j+1) ||
-                isVisible hm (i+1) j
-  where h_up = hm ! up coord
-        h_down = hm ! down coord
-        h_left = hm ! left coord
-        h_right = hm ! right coord
-        h = hm ! coord
+isVisible hm c = not . null $ visibleFrom hm c
 
-up :: Coord -> Coord
-up (i, j) = (i-1, j)
+visibleFrom :: HeightMap -> Coord -> [Dir]
+visibleFrom hm coord =
+  flatten [ toMaybe (height > tallest hm (up coord)) Up,
+            toMaybe (height > tallest hm (left coord)) Left,
+            toMaybe (height > tallest hm (right coord)) Right,
+            toMaybe (height > tallest hm (down coord)) Down ]
+  where height = hm ! coord
 
-down :: Coord -> Coord
-down (i, j) = (i+1, j)
+-- Member wise tuple numerical operation.
+-- This definition must already exist somewhere
+instance (Num a, Num b) => Num (a, b) where
+  (+) (i0, j0) (i1, j1) = (i0 + i1, j0 + j1)
+  (*) (i0, j0) (i1, j1) = (i0 * i1, j0 * j1)
+  abs (i, j) = (abs i, abs j)
+  signum (i, j) = (signum i, signum j)
+  fromInteger i = (fromInteger i, fromInteger i)
+  negate (i, j) = (negate i, negate j)
 
-left :: Coord -> Coord
-left (i, j) = (i, j-1)
+up :: Coord -> Iterator Coord
+up = tail . myIterate (+ (-1, 0))
 
-right :: Coord -> Coord
-right (i, j) = (i, j+1)
+down :: Coord -> Iterator Coord
+down = tail . myIterate (+ (1, 0))
 
+left :: Coord -> Iterator Coord
+left = tail . myIterate (+ (0 ,-1))
 
+right :: Coord -> Iterator Coord
+right = tail . myIterate (+ (0, 1))
 
+-- Generic methods
+
+isInbound :: (Ord a, Ord b) => Array (a, b) c -> (a, b) -> Bool
+isInbound hm (i, j) = i0 <= i && i <= i1 && j0 <= j && j <= j1
+  where ((i0, j0), (i1, j1)) = bounds hm
+
+myIterate :: (a -> a) -> a -> [a]
+myIterate f a0 = a0 : myIterate f (f a0)
+
+toMaybe :: Bool -> a -> Maybe a
+toMaybe True x = Just x
+toMaybe False _ = Nothing
+
+flatten :: Foldable t => [t a] -> [a]
+flatten = Data.Foldable.concatMap Data.Foldable.toList
 
 
 --- OPT ME: Possibly use a mutable array, let be lazy and not too, and hope
