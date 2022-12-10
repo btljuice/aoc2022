@@ -7,6 +7,9 @@ module Day8(
   visibleFrom,
   day8part1,
   Dir(..),
+  viewDistances,
+  viewDistanceFrom,
+  day8part2,
 ) where
 
 import GHC.Arr (listArray, Array(..))
@@ -41,6 +44,8 @@ countVisible hm = sum [ fromEnum (isVisible hm c) | c <- indices hm ]
 -- evaluated expression ?
 -- otherwise we'll memoize the tallest heights
 
+------ Part 1
+
 tallest :: HeightMap -> Iterator Coord -> Int
 tallest hm ite
   | isInbound hm coord = max height (tallest hm (tail ite))
@@ -58,6 +63,34 @@ visibleFrom hm coord =
             toMaybe (height > tallest hm (right coord)) Right,
             toMaybe (height > tallest hm (down coord)) Down ]
   where height = hm ! coord
+
+
+---- Part 2
+
+viewDistanceFrom :: HeightMap -> Int -> Iterator Coord -> Int
+viewDistanceFrom hm homeHeight ite
+  | not inbound = 0 -- on the edge, there's nothing to see
+  | homeHeight <= height = 1
+  | otherwise = 1 + viewDistanceFrom hm homeHeight (tail ite) -- Can see next tree and maybe more
+  where coord  = head ite
+        inbound = isInbound hm coord
+        height = hm ! coord
+
+viewDistances :: HeightMap -> Coord -> [Int]
+viewDistances hm coord =
+  [ viewDistanceFrom hm height (up coord),
+    viewDistanceFrom hm height (left coord),
+    viewDistanceFrom hm height (right coord),
+    viewDistanceFrom hm height (down coord) ]
+  where height = hm ! coord
+
+day8part2 :: [String] -> Int
+day8part2 = maxViewDistanceScore . readHeightMap
+
+maxViewDistanceScore :: HeightMap -> Int
+maxViewDistanceScore hm = maximum [product (viewDistances hm c) | c <- indices hm]
+
+
 
 -- Member wise tuple numerical operation.
 -- This definition must already exist somewhere

@@ -47,5 +47,13 @@ spec = do
     it "nbVisible trees" $ do
       day8part1 heightMapStr `shouldBe` 21
 
+    it "viewing distances" $ do
+      viewDistances heightMap (2, 3) `shouldBe` [1, 1, 2, 2]
+      viewDistances heightMap (4, 3) `shouldBe` [2, 2, 2, 1]
+
+    it "max viewing score for samples" $ do
+      day8part2 heightMapStr `shouldBe` 8
+
+
 
 
