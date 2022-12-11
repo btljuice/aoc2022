@@ -22,6 +22,15 @@ instructionsStr = [ "addx 15", "addx -11", "addx 6", "addx -3", "addx 5", "addx 
   "noop", "addx -10", "noop", "noop", "addx 20", "addx 1", "addx 2", "addx 2", "addx -6", "addx -11",
   "noop", "noop", "noop" ]
 
+imageStr :: [String]
+imageStr = [ "##..##..##..##..##..##..##..##..##..##..",
+             "###...###...###...###...###...###...###.",
+             "####....####....####....####....####....",
+             "#####.....#####.....#####.....#####.....",
+             "######......######......######......####",
+             "#######.......#######.......#######....." ]
+
+
 spec :: Spec
 spec = do
   describe "registerValues . sequentialInstructions" $ do
@@ -30,6 +39,11 @@ spec = do
   describe "day10part1 over samples should" $ do
     it "return 13140 of signal strength" $ do
       day10part1 instructionsStr `shouldBe` 13140
+
+  describe "day10part2" $ do
+    it "draws image correctly" $ do
+      day10part2 instructionsStr `shouldBe` imageStr
+      -- (drawImage . take (6*40) . registerValues . sequentialInstructions . readInstructions $ instructionsStr) `shouldBe` concat imageStr
 
 
 

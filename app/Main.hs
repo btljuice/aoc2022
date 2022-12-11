@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unused-top-binds #-}
+
 module Main (main) where
 
 import Prelude
@@ -12,7 +14,7 @@ import qualified Day5 as PermutationOrder
 import Day7
 import Day8 (day8part1, day8part2)
 import Day9 (day9part1, day9part2)
-import Day10 (day10part1)
+import Day10 (day10part1, day10part2)
 
 import Data.List(sort)
 
@@ -87,6 +89,8 @@ day10Solution :: IO ()
 day10Solution = do
   ls <- readLines "day10.txt"
   putStrLn $ "day10 part 1 = " ++ (show . day10part1 $ ls)
+  putStrLn "day10 part 2 ="
+  mapM_ putStrLn (day10part2 ls)
 
 
 main :: IO ()
