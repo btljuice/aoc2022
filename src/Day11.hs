@@ -4,7 +4,9 @@ module Day11 (
   rounds,
   WorryLevel,
   day11part1,
+  day11part2,
   day11Monkeys,
+  nbThrownItems,
 ) where
 
 import Lib (replace)
@@ -12,12 +14,13 @@ import Data.List (transpose, sortOn)
 
 ---- Monkey interface
 
-type WorryLevel = Int
+type WorryLevel = Integer
 
 data Monkey = Monkey {
   items :: [WorryLevel], -- starting items
-  update :: WorryLevel -> Int, -- updates worry level after inspection
-  throwTo :: WorryLevel -> Int -- to which monkey to throw the item to.
+  update :: WorryLevel -> WorryLevel, -- updates worry level after inspection
+  throwTo :: WorryLevel -> Int, -- to which monkey to throw the item to.
+  shouldRelief :: Bool
 }
 
 instance Show Monkey where
@@ -43,12 +46,11 @@ noItem = not . hasItem
 throwItem :: Monkey -> (Monkey, (Int, WorryLevel))
 throwItem Monkey{items = []} = error "Monkey needs an non-empty list"
 throwItem m@Monkey{items = w:rest } = (m {items = rest}, (i, w'))
-  where w' = relief . update m $ w
+  where w' = maybeRelieve . update m $ w
         i  = throwTo m w'
+        -- after inspection of an item: Divides worry by 3, rounds down
+        maybeRelieve = if shouldRelief m then (`div` 3) else id
 
--- after inspection of an item: Divides worry by 3, rounds down
-relief :: WorryLevel -> WorryLevel
-relief  = (`div` 3)
 
 
 
@@ -75,49 +77,72 @@ oneRound monkeys = foldl foldFn (monkeys, [] :: [Int])  [0..(length monkeys - 1)
 rounds :: Int -> [Monkey] -> [([Monkey], [Int])]
 rounds n monkeys = scanl (\ (ms, _) f -> f ms) (monkeys, replicate 0 (length monkeys)) (replicate n oneRound)
 
+nbThrownItems :: Int -> [Monkey] -> [Int]
+nbThrownItems n = map sum . transpose . map snd . rounds n
+
 day11part1 :: [Monkey] -> Int
-day11part1 = product . take 2 . sortOn negate . map sum . transpose . map snd . rounds 20 -- no need to process last round
+day11part1 = mostThrowingMonkeysFormula . nbThrownItems 20 -- no need to process last round
+
+mostThrowingMonkeysFormula :: [Int] -> Int
+mostThrowingMonkeysFormula = product . take 2 . sortOn negate
+
+day11part2 :: [Monkey] -> Int
+day11part2 monkeys = mostThrowingMonkeysFormula $ nbThrownItems 10000 monkeys'
+  where monkeys' = map (\ m -> m{shouldRelief = False}) monkeys
 
 day11Monkeys :: [Monkey]
 day11Monkeys = [
   Monkey{
     items = [53, 89, 62, 57, 74, 51, 83, 97],
     update = (* 3),
-    throwTo = divisibleBy 13 1 5
+    throwTo = divisibleBy 13 1 5,
+    shouldRelief = True
   },
   Monkey{
     items = [85, 94, 97, 92, 56],
     update = (+ 2),
-    throwTo = divisibleBy 19 5 2
+    throwTo = divisibleBy 19 5 2,
+    shouldRelief = True
   },
   Monkey{
     items = [86, 82, 82],
     update = (+ 1),
-    throwTo = divisibleBy 11 3 4
+    throwTo = divisibleBy 11 3 4,
+    shouldRelief = True
+
   },
   Monkey{
     items = [94, 68],
     update = (+ 5),
-    throwTo = divisibleBy 17 7 6
+    throwTo = divisibleBy 17 7 6,
+    shouldRelief = True
+
   },
   Monkey{
     items = [83, 62, 74, 58, 96, 68, 85],
     update = (+ 4),
-    throwTo = divisibleBy 3 3 6
+    throwTo = divisibleBy 3 3 6,
+    shouldRelief = True
+
   },
   Monkey{
     items = [50, 68, 95, 82],
     update = (+ 8),
-    throwTo = divisibleBy 7 2 4
+    throwTo = divisibleBy 7 2 4,
+    shouldRelief = True
+
   },
   Monkey{
     items = [75],
     update = (* 7),
-    throwTo = divisibleBy 5 7 0
+    throwTo = divisibleBy 5 7 0,
+    shouldRelief = True
+
   },
   Monkey{
     items = [92, 52, 85, 89, 68, 82],
     update = \w -> w * w,
-    throwTo = divisibleBy 2 0 1
+    throwTo = divisibleBy 2 0 1,
+    shouldRelief = True
   } ]
   where divisibleBy d t f w = if w `mod` d == 0 then t else f
