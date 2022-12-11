@@ -7,7 +7,7 @@ module Day11 (
 ) where
 
 import Lib (replace)
-import Data.List (transpose, sortOn)
+import Data.List (transpose, sortOn, unzip)
 import qualified Data.Ord as Ordering
 
 ---- Monkey interface
@@ -31,7 +31,6 @@ addItem m w = m { items = items m ++ [w] }
 popItem :: Monkey -> (Monkey, WorryLevel)
 popItem Monkey{ items = [] } = error "Monkey has no item"
 popItem m@Monkey{items = w:rest } = (m{items = rest}, w)
-
 
 hasItem :: Monkey -> Bool
 hasItem Monkey{ items = [] } = False
@@ -67,13 +66,14 @@ throwAllItems monkeys i
   where m = monkeys !! i
 
 
-oneRound :: [Monkey] -> [Monkey]
-oneRound monkeys = foldl throwAllItems monkeys [0..(length monkeys - 1)]
+oneRound :: [Monkey] -> ([Monkey], [Int])
+oneRound monkeys = foldl foldFn (monkeys, [] :: [Int])  [0..(length monkeys - 1)]
+  where foldFn (ms, counts) i = (throwAllItems ms i, counts ++ [countItems ms i])
+        countItems ms i = length . items $ ms !! i
 
 -- N.B. There's probably some Applicative typeclass method that enables doing that
-rounds :: Int -> [Monkey] -> [[Monkey]]
-rounds n monkeys = scanl (\ ms f -> f ms) monkeys (replicate n oneRound)
+rounds :: Int -> [Monkey] -> [([Monkey], [Int])]
+rounds n monkeys = scanl (\ (ms, _) f -> f ms) (monkeys, replicate 0 (length monkeys)) (replicate n oneRound)
 
 day11part1 :: [Monkey] -> Int
-day11part1 = product . take 2 . sortOn negate . map sum .transpose . map toCounts . rounds (20-1) -- no need to process last round
-  where toCounts = map (length . items)
+day11part1 = product . take 2 . sortOn negate . map sum . transpose . map snd . rounds 20 -- no need to process last round

@@ -35,7 +35,7 @@ spec :: Spec
 spec = do
   describe "20 rounds of monkeys" $ do
     it "have items at expected places" $ do
-      (itemsOnly . last  . rounds 20 $ sampleMonkeys) `shouldBe` [[10, 12, 14, 26, 34], [245, 93, 53, 199, 115], [], []]
+      (itemsOnly . fst . last  . rounds 20 $ sampleMonkeys) `shouldBe` [[10, 12, 14, 26, 34], [245, 93, 53, 199, 115], [], []]
   describe "day11part1" $ do
     it "should return 10605 on sample" $ do
       day11part1 sampleMonkeys `shouldBe` 10605
