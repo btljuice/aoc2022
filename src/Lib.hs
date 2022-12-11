@@ -4,10 +4,12 @@ module Lib
     onlyTwoWords,
     readTwoWords,
     submatches,
+    pChar, pString,
   )
 where
 
 import Text.Regex.TDFA
+import Text.Read
 
 someFunc :: IO ()
 someFunc = putStrLn "someFunc"
@@ -29,3 +31,11 @@ readTwoWords str = (read a, read b)
 submatches :: String -> String -> [String]
 submatches rgx str = sms
   where (_ ,_, _, sms) = str =~ rgx :: (String, String, String, [String])
+
+pChar :: Char -> ReadPrec Char
+pChar c = do
+  c' <- get
+  if c == c' then return c else pfail
+
+pString :: String -> ReadPrec String
+pString = traverse pChar
