@@ -4,11 +4,11 @@ module Day11 (
   rounds,
   WorryLevel,
   day11part1,
+  day11Monkeys,
 ) where
 
 import Lib (replace)
-import Data.List (transpose, sortOn, unzip)
-import qualified Data.Ord as Ordering
+import Data.List (transpose, sortOn)
 
 ---- Monkey interface
 
@@ -77,3 +77,47 @@ rounds n monkeys = scanl (\ (ms, _) f -> f ms) (monkeys, replicate 0 (length mon
 
 day11part1 :: [Monkey] -> Int
 day11part1 = product . take 2 . sortOn negate . map sum . transpose . map snd . rounds 20 -- no need to process last round
+
+day11Monkeys :: [Monkey]
+day11Monkeys = [
+  Monkey{
+    items = [53, 89, 62, 57, 74, 51, 83, 97],
+    update = (* 3),
+    throwTo = divisibleBy 13 1 5
+  },
+  Monkey{
+    items = [85, 94, 97, 92, 56],
+    update = (+ 2),
+    throwTo = divisibleBy 19 5 2
+  },
+  Monkey{
+    items = [86, 82, 82],
+    update = (+ 1),
+    throwTo = divisibleBy 11 3 4
+  },
+  Monkey{
+    items = [94, 68],
+    update = (+ 5),
+    throwTo = divisibleBy 17 7 6
+  },
+  Monkey{
+    items = [83, 62, 74, 58, 96, 68, 85],
+    update = (+ 4),
+    throwTo = divisibleBy 3 3 6
+  },
+  Monkey{
+    items = [50, 68, 95, 82],
+    update = (+ 8),
+    throwTo = divisibleBy 7 2 4
+  },
+  Monkey{
+    items = [75],
+    update = (* 7),
+    throwTo = divisibleBy 5 7 0
+  },
+  Monkey{
+    items = [92, 52, 85, 89, 68, 82],
+    update = \w -> w * w,
+    throwTo = divisibleBy 2 0 1
+  } ]
+  where divisibleBy d t f w = if w `mod` d == 0 then t else f

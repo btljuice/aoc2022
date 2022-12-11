@@ -15,6 +15,7 @@ import Day7
 import Day8 (day8part1, day8part2)
 import Day9 (day9part1, day9part2)
 import Day10 (day10part1, day10part2)
+import Day11(day11part1, day11Monkeys)
 
 import Data.List(sort)
 
@@ -92,6 +93,10 @@ day10Solution = do
   putStrLn "day10 part 2 ="
   mapM_ putStrLn (day10part2 ls)
 
+day11Solution :: IO ()
+day11Solution = do
+  putStrLn $ "day11 part 1 = " ++ (show . day11part1 $ day11Monkeys)
+
 
 main :: IO ()
 main = do
@@ -106,4 +111,5 @@ main = do
   -- day7Solution
   -- day8Solution
   -- day9Solution
-  day10Solution
+  -- day10Solution
+  day11Solution
