@@ -1,23 +1,33 @@
 module Lib
-  ( palindrome,
-    someFunc,
+  (
     onlyTwoWords,
     readTwoWords,
+    replace,
     submatches,
     pChar, pString,
+    flatten,
   )
 where
 
 import Text.Regex.TDFA
 import Text.Read
+import Data.List (find)
+import qualified Data.Foldable
 
-someFunc :: IO ()
-someFunc = putStrLn "someFunc"
+----- List section ----
+-- Slow inefficient list object replacement
+replace :: [(Int, a)] -> [a] -> [a]
+replace newElems = zipWith replaceElem [0..]
+  where replaceElem i e = maybe e snd $ find (\ (i', _) -> i == i') newElems
 
-palindrome :: String -> Bool
-palindrome xs
-  | xs == reverse xs = True
-  | otherwise = False
+
+-- Flattens a List Maybe for example
+flatten :: Foldable t => [t a] -> [a]
+flatten = Data.Foldable.concatMap Data.Foldable.toList
+
+
+
+----- parse strings section ---
 
 onlyTwoWords :: String -> (String, String)
 onlyTwoWords l = case words l of
@@ -31,6 +41,9 @@ readTwoWords str = (read a, read b)
 submatches :: String -> String -> [String]
 submatches rgx str = sms
   where (_ ,_, _, sms) = str =~ rgx :: (String, String, String, [String])
+
+
+----- ReadPrec helpers when defining custom Read
 
 pChar :: Char -> ReadPrec Char
 pChar c = do
