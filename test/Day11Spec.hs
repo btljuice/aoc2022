@@ -54,6 +54,8 @@ spec = do
     it "no relief - after 20 rounds" $ do
       nbThrownItems 20 (noRelief sampleMonkeys) `shouldBe` [99, 97, 8, 103]
     it "no relief - after 1000 rounds" $ do
-    --   nbThrownItems 1000 (noRelief sampleMonkeys) `shouldBe` [5204, 4792, 199, 5192]
-    -- it "no relief - after 2000 rounds" $ do
-    --   nbThrownItems 2000 (noRelief sampleMonkeys) `shouldBe` [10419, 9577, 392, 10391]
+      nbThrownItems 1000 (noRelief sampleMonkeys) `shouldBe` [5204, 4792, 199, 5192]
+    it "no relief - after 2000 rounds" $ do
+      nbThrownItems 2000 (noRelief sampleMonkeys) `shouldBe` [10419, 9577, 392, 10391]
+    it "no relief - after 10000 rounds" $ do
+      nbThrownItems 10000 (noRelief sampleMonkeys) `shouldBe` [52166, 47830, 1938, 52013]

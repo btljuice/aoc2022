@@ -46,10 +46,11 @@ noItem = not . hasItem
 throwItem :: Monkey -> (Monkey, (Int, WorryLevel))
 throwItem Monkey{items = []} = error "Monkey needs an non-empty list"
 throwItem m@Monkey{items = w:rest } = (m {items = rest}, (i, w'))
-  where w' = maybeRelieve . update m $ w
+  where w' = capValue . maybeRelieve . update m $ w
         i  = throwTo m w'
         -- after inspection of an item: Divides worry by 3, rounds down
         maybeRelieve = if shouldRelief m then (`div` 3) else id
+        capValue w = w `mod` (2*3*5*7*11*13*17*19*23)
 
 
 
