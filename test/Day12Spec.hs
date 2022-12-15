@@ -3,7 +3,6 @@ module Day12Spec(spec) where
 
 import Test.Hspec
 import Day12
-import Data.Array ((!))
 
 sampleHmStr = [
   "Sabqponm",
@@ -12,15 +11,13 @@ sampleHmStr = [
   "acctuvwj",
   "abdefghi" ]
 
-hm = readHeightMap sampleHmStr
-start = (1, 1)
-end = (3, 6)
 
 spec :: Spec
 spec = do
   describe "day12part1" $ do
     it "should find path from start to finish in 31 steps" $ do
       day12part1 sampleHmStr `shouldBe` 31
-    -- it "should find path from start to finish in 31 steps" $ do
-    --   fmap snd ( findPath hm start end ! (1, 1) ) `shouldBe` Just 31
+  describe "day12part2" $ do
+    it "should find path from any a to finish in 29 steps" $ do
+      day12part2 sampleHmStr `shouldBe` 29
 

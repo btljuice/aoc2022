@@ -2,6 +2,7 @@ module Day12 (
   readHeightMap,
   findPath,
   day12part1,
+  day12part2,
 ) where
 
 import Data.Array (Array, (!), (//) )
@@ -114,3 +115,11 @@ day12part1 strs =
       dm = findPath hm start end
       (_, distance) = fromJust (dm ! start)
   in distance
+
+day12part2 :: [String] -> Int
+day12part2 strs = minimum dirs
+  where (hm, start, end) = readHeightMap strs
+        dm = findPath hm start end
+        dirs = [ snd d | (pos, h) <- Array.assocs hm , h == 0,
+                         let maybeD = dm ! pos,
+                         d <- Data.Foldable.toList maybeD ]
