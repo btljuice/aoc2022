@@ -1,6 +1,7 @@
 module Day12 (
   readHeightMap,
   findPath,
+  day12part1,
 ) where
 
 import Data.Array (Array, (!), (//) )
@@ -10,6 +11,7 @@ import Data.Maybe (isJust)
 import Control.Exception (assert)
 import qualified Data.List.Split as Data.List
 import qualified Data.Foldable
+import GHC.Data.Maybe (fromJust)
 
 -- heightmap
 -- elevation : [a-z]
@@ -54,10 +56,15 @@ normalizeHeight 'S' = 0
 normalizeHeight 'E' = 25
 normalizeHeight c = fromEnum c - fromEnum 'a'
 
-readHeightMap :: [String] -> HeightMap
-readHeightMap lines = Array.listArray ((1, 1), (i, j)) $ map normalizeHeight (concat lines)
-  where j = length (head lines)
-        i = length lines
+readHeightMap :: [String] -> (HeightMap, Coord, Coord)
+readHeightMap strs =
+  let i = length strs
+      j = length (head strs)
+      charArr = Array.listArray ((1, 1), (i, j)) (concat strs)
+      -- fromJust is like a .get . have to check them out
+      (start, _) = fromJust . Data.Foldable.find ((== 'S') . snd) . Array.assocs $ charArr
+      (end,   _) = fromJust . Data.Foldable.find ((== 'E') . snd) . Array.assocs $ charArr
+  in (fmap normalizeHeight charArr, start, end)
 
 
 propagatePos :: HeightMap -> DirMap -> Coord -> (DirMap, [Coord])
@@ -78,11 +85,12 @@ reachableFrom hm dm to dir
   where from = backward dir to
         toHeight = hm ! to
         fromHeight = hm ! from
-        Just (_, toDistance) = dm ! to
-        Just (_, fromDistance) = dm !  from
+        (_, toDistance) = fromJust (dm ! to)
+        (_, fromDistance) = fromJust (dm !  from)
 
+-- Let's generate closest path to E by backtracking from E, all the way to S, breadth first search
 findPath :: HeightMap -> Coord -> Coord -> DirMap
-findPath hm start end = propagateMap hm dirMap0 [end]
+findPath hm _ end = propagateMap hm dirMap0 [end]
   where dirMap0 = initDirMap (snd . Array.bounds $ hm) // [(end, Just (U, 0))]
 
 
@@ -100,4 +108,9 @@ drawArray arr = Data.List.chunksOf dimJ . Data.Foldable.toList $ arr
   where (_, (_, dimJ)) = Array.bounds arr
 
 
--- Let's generate closest path to E by backtracking from E, all the way to S, breadth first search
+day12part1 :: [String] -> Int
+day12part1 strs =
+  let (hm, start, end) = readHeightMap strs
+      dm = findPath hm start end
+      (_, distance) = fromJust (dm ! start)
+  in distance

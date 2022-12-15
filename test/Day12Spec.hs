@@ -20,5 +20,7 @@ spec :: Spec
 spec = do
   describe "day12part1" $ do
     it "should find path from start to finish in 31 steps" $ do
-      fmap snd ( findPath hm start end ! (1, 1) ) `shouldBe` Just 31
+      day12part1 sampleHmStr `shouldBe` 31
+    -- it "should find path from start to finish in 31 steps" $ do
+    --   fmap snd ( findPath hm start end ! (1, 1) ) `shouldBe` Just 31
 

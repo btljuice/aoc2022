@@ -21,6 +21,7 @@ dependencies:
   - regex-tdfa
   - scanf
   - vector
+  - ghc
 ghc-options:
   - '-Wall'
   - '-Wcompat'

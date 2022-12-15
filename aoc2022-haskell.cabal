@@ -48,6 +48,7 @@ library
     , base >=4.7 && <5
     , containers
     , directory
+    , ghc
     , hspec
     , regex-tdfa
     , scanf
@@ -68,6 +69,7 @@ executable aoc2022-haskell-exe
     , base >=4.7 && <5
     , containers
     , directory
+    , ghc
     , hspec
     , regex-tdfa
     , scanf
@@ -104,6 +106,7 @@ test-suite aoc2022-haskell-test
     , base >=4.7 && <5
     , containers
     , directory
+    , ghc
     , hspec
     , hspec-discover
     , regex-tdfa
