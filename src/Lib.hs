@@ -6,6 +6,7 @@ module Lib
     submatches,
     pChar, pString,
     flatten,
+    isInbound,
   )
 where
 
@@ -13,6 +14,8 @@ import Text.Regex.TDFA
 import Text.Read
 import Data.List (find)
 import qualified Data.Foldable
+
+import Data.Array
 
 ----- List section ----
 -- Slow inefficient list object replacement
@@ -52,3 +55,7 @@ pChar c = do
 
 pString :: String -> ReadPrec String
 pString = traverse pChar
+
+isInbound :: (Ord a, Ord b) => Array (a, b) c -> (a, b) -> Bool
+isInbound hm (i, j) = i0 <= i && i <= i1 && j0 <= j && j <= j1
+  where ((i0, j0), (i1, j1)) = Data.Array.bounds hm
