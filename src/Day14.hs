@@ -40,8 +40,12 @@ coordBounds coords = ((minX, minY), (maxX, maxY))
         (minY, maxY) = minmax [y | (_, y) <- coords]
 
 mkAirArray :: [Path] -> CellArray
-mkAirArray paths = Array.listArray dim (repeat Air)
-  where dim = coordBounds ( source : concat paths )
+mkAirArray paths = Array.listArray extendDim (repeat Air)
+  where dim@((x0, y0), (x1, y1)) = coordBounds ( source : concat paths )
+        dy = y1 + 2 - y0
+        x0' = min x0 (500 - dy - 1)
+        x1' = max x1 (500 + dy + 1)
+        extendDim = ((x0', y0), (x1', y1 + 2))
 
 pathCoords :: Path -> [Coord]
 pathCoords = concatMap (uncurry lineCoords . onlyTwo) . sliding 2
@@ -64,8 +68,8 @@ readCoord :: String -> Coord
 readCoord = both read . onlyTwo . splitOn ","
 
 
-day14InitArray :: [Path] -> CellArray
-day14InitArray paths = mkAirArray paths // [(r, Rock) | r <- rockCoords]
+day14part1InitArray :: [Path] -> CellArray
+day14part1InitArray paths = mkAirArray paths // [(r, Rock) | r <- rockCoords]
                                         // [(source, Source)]
   where rockCoords = concatMap pathCoords paths
 
@@ -106,7 +110,7 @@ pourSand arr c
         (arr''', sandRight, abyssRight) = pourSand arr'' (downRight c)
 
 day14part1 :: [String] -> (CellArray, Int, Bool)
-day14part1 = flip pourSand source  . day14InitArray . fmap readPath
+day14part1 = flip pourSand source  . day14part1InitArray . fmap readPath
 
 down :: Coord -> Coord
 down (x, y) = (x, y + 1)
