@@ -1,5 +1,6 @@
 module Day14 (
   day14part1,
+  day14part2,
   drawCellArray,
 ) where
 
@@ -73,6 +74,14 @@ day14part1InitArray paths = mkAirArray paths // [(r, Rock) | r <- rockCoords]
                                         // [(source, Source)]
   where rockCoords = concatMap pathCoords paths
 
+day14part2InitArray :: [Path] -> CellArray
+day14part2InitArray paths =
+  let arr = day14part1InitArray paths
+      ((xmin, _), (xmax, ymax)) = Array.bounds arr
+      rockBottom = [((x, ymax), Rock) | x <- [xmin..xmax]]
+  in arr // rockBottom
+
+
 
 samplePaths :: [String]
 samplePaths = [
@@ -111,6 +120,9 @@ pourSand arr c
 
 day14part1 :: [String] -> (CellArray, Int, Bool)
 day14part1 = flip pourSand source  . day14part1InitArray . fmap readPath
+
+day14part2 :: [String] -> (CellArray, Int, Bool)
+day14part2 = flip pourSand source  . day14part2InitArray . fmap readPath
 
 down :: Coord -> Coord
 down (x, y) = (x, y + 1)
