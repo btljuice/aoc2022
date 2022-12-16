@@ -22,6 +22,9 @@ dependencies:
   - scanf
   - vector
   - ghc
+  - extra
+  - regex-compat
+  - text
 ghc-options:
   - '-Wall'
   - '-Wcompat'

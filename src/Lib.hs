@@ -1,5 +1,6 @@
 module Lib
   (
+    onlyTwo,
     onlyTwoWords,
     readTwoWords,
     replace,
@@ -7,6 +8,10 @@ module Lib
     pChar, pString,
     flatten,
     isInbound,
+    trim,
+    sliding,
+    minmax,
+    showCharArray,
   )
 where
 
@@ -16,8 +21,21 @@ import Data.List (find)
 import qualified Data.Foldable
 
 import Data.Array
+import Data.List.Extra (dropWhileEnd)
+import qualified Data.List.Split
 
 ----- List section ----
+
+-- Naive implementation. should do this in one traversal
+minmax :: (Ord a, Foldable t) => t a -> (a, a)
+minmax fa = (minimum fa, maximum fa)
+
+-- Sliding
+sliding :: Int -> [a] -> [[a]]
+sliding n xs
+  | length xs < n = []
+  | otherwise = take n xs : sliding n (drop 1 xs)
+
 -- Slow inefficient list object replacement
 replace :: [(Int, a)] -> [a] -> [a]
 replace newElems = zipWith replaceElem [0..]
@@ -28,9 +46,16 @@ replace newElems = zipWith replaceElem [0..]
 flatten :: Foldable t => [t a] -> [a]
 flatten = Data.Foldable.concatMap Data.Foldable.toList
 
-
+-- To tuple
+onlyTwo :: (Show a) => [a] -> (a, a)
+onlyTwo [x, y] = (x, y)
+onlyTwo l = error $ "List must be of size 2 : " ++ show l
 
 ----- parse strings section ---
+
+trim :: String -> String
+trim = dropWhile (==' ') . dropWhileEnd (==' ')
+
 
 onlyTwoWords :: String -> (String, String)
 onlyTwoWords l = case words l of
@@ -55,6 +80,14 @@ pChar c = do
 
 pString :: String -> ReadPrec String
 pString = traverse pChar
+
+--- Array section
+
+showCharArray :: (a -> Char) -> Array (Int, Int) a -> [String]
+showCharArray toChar arr = Data.List.Split.chunksOf width . fmap toChar . Data.Array.elems $ arr
+  where ((i0, _), (i1, _)) = Data.Array.bounds arr
+        width = i1 - i0 + 1 -- Inclusive range
+
 
 isInbound :: (Ord a, Ord b) => Array (a, b) c -> (a, b) -> Bool
 isInbound hm (i, j) = i0 <= i && i <= i1 && j0 <= j && j <= j1

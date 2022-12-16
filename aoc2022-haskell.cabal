@@ -30,6 +30,7 @@ library
       Day11
       Day12
       Day13
+      Day14
       Day2
       Day3
       Day4
@@ -49,11 +50,14 @@ library
     , base >=4.7 && <5
     , containers
     , directory
+    , extra
     , ghc
     , hspec
+    , regex-compat
     , regex-tdfa
     , scanf
     , split
+    , text
     , vector
   default-language: Haskell2010
 
@@ -70,11 +74,14 @@ executable aoc2022-haskell-exe
     , base >=4.7 && <5
     , containers
     , directory
+    , extra
     , ghc
     , hspec
+    , regex-compat
     , regex-tdfa
     , scanf
     , split
+    , text
     , vector
   default-language: Haskell2010
 
@@ -88,6 +95,7 @@ test-suite aoc2022-haskell-test
       Day11Spec
       Day12Spec
       Day13Spec
+      Day14Spec
       Day1Spec
       Day2Spec
       Day3Spec
@@ -108,11 +116,14 @@ test-suite aoc2022-haskell-test
     , base >=4.7 && <5
     , containers
     , directory
+    , extra
     , ghc
     , hspec
     , hspec-discover
+    , regex-compat
     , regex-tdfa
     , scanf
     , split
+    , text
     , vector
   default-language: Haskell2010
