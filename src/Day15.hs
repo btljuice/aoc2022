@@ -4,6 +4,7 @@ module Day15 (
 
 import Lib(submatches)
 import Data.Set(difference)
+import Data.Maybe(maybe)
 import qualified Data.Set as Set
 
 
@@ -19,7 +20,16 @@ import qualified Data.Set as Set
 
 type Coord = (Int, Int)
 
+type Range = (Int, Int)
+
 data Sensor = Sensor { sensorPos :: Coord, beaconPos :: Coord, manDist :: Int } deriving (Show)
+
+merge :: Range -> Range -> [Range]
+merge a@(a0, a1) b@(b0, b1)
+  | a0 > b0 = merge b a
+  | a1 < b0 = [a, b]
+  | a1 < b1 = [(a0, b1)]
+  | otherwise = [a]
 
 
 coordRegex = "x=(-?[[:digit:]]+), y=(-?[[:digit:]]+)"
@@ -39,9 +49,12 @@ readSensor str = case submatches sensorRegex str of
 
 
 noBeaconXs :: Sensor -> Int -> [Int]
-noBeaconXs Sensor { sensorPos = (sx, sy), manDist = md } y
-  | dy > md = []
-  | otherwise = [sx - nbPoints .. sx + nbPoints]
+noBeaconXs sensor y = maybe [] (\ (x0, x1) -> [x0..x1]) (noBeaconRange sensor y)
+
+noBeaconRange :: Sensor -> Int -> Maybe Range
+noBeaconRange Sensor { sensorPos = (sx, sy), manDist = md } y
+  | dy > md = Nothing
+  | otherwise = Just (sx - nbPoints, sx + nbPoints)
   where dy = abs (sy - y)
         nbPoints = md - dy
 
@@ -52,3 +65,10 @@ nbNoBeaconPos sensors y = Set.size ( noXs `difference` beaconXs )
 
 day15part1 :: [String] -> Int -> Int
 day15part1 sensors y = (`nbNoBeaconPos` y) . fmap readSensor $ sensors
+
+
+-- Part 2
+-- (x, y) E [0, 4M]
+
+tuningFreq :: Sensor -> Int
+tuningFreq Sensor{beaconPos = (x, y)} = x*4000000 + y --
