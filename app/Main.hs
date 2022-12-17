@@ -19,7 +19,7 @@ import Day11(day11part1, day11Monkeys, Monkey (shouldRelief), day11part2)
 import Day12(day12part1, day12part2)
 import Day13(day13part1, day13part2)
 import Day14(day14part1, day14part2)
-import Day15(day15part1)
+import Day15(day15part1, day15part2)
 
 import Data.List(sort)
 import Data.Tuple.Extra (snd3)
@@ -125,6 +125,7 @@ day15Solution :: IO ()
 day15Solution = do
   ls <- readLines "day15.txt"
   putStrLn $ "day15 part 1 = " ++ show (day15part1 ls 2000000)
+  putStrLn $ "day15 part r = " ++ show (day15part2 ls 0 4000000)
 
 
 
