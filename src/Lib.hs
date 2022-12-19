@@ -1,17 +1,20 @@
 module Lib
   (
-    onlyTwo,
-    onlyTwoWords,
-    readTwoWords,
-    replace,
-    submatches,
-    pChar, pString,
     flatten,
     isInbound,
-    trim,
-    sliding,
     minmax,
+    onlyTwo,
+    onlyTwoWords,
+    pChar, pString,
+    readTwoWords,
+    replace,
     showCharArray,
+    sliding,
+    submatches,
+    submatches1,
+    submatches3,
+    trim,
+    shortestPath,
   )
 where
 
@@ -51,6 +54,17 @@ onlyTwo :: (Show a) => [a] -> (a, a)
 onlyTwo [x, y] = (x, y)
 onlyTwo l = error $ "List must be of size 2 : " ++ show l
 
+-------- Algorithm --------
+
+shortestPath :: Eq a => [(a, a)] -> a -> a -> [a]
+shortestPath edges start end = reverse . impl $ [[start]]
+  where impl [] = []
+        impl (path:others)
+           | head path == end = path
+           | otherwise =
+                let nexts = [to:path | (from, to) <- edges, from == head path && notElem to path]
+                in  impl (others ++ nexts)
+
 ----- parse strings section ---
 
 trim :: String -> String
@@ -69,6 +83,18 @@ readTwoWords str = (read a, read b)
 submatches :: String -> String -> [String]
 submatches rgx str = sms
   where (_ ,_, _, sms) = str =~ rgx :: (String, String, String, [String])
+
+submatches1 :: String -> String -> String
+submatches1 rgx str = case submatches rgx str of
+  [m] -> m
+  [] -> error $ "Can't match string = '" ++ str ++ "' to regex = '" ++ rgx
+  ms -> error $ "Wrong number of matches = '" ++ show ms ++ "' in string = '" ++ str ++ "' to regex = '" ++ rgx
+
+submatches3 :: String -> String -> (String, String, String)
+submatches3 rgx str = case submatches rgx str of
+  [m1, m2, m3] -> (m1, m2, m3)
+  [] -> error $ "Can't match string = '" ++ str ++ "' to regex = '" ++ rgx
+  ms -> error $ "Wrong number of matches = '" ++ show ms ++ "' in string = '" ++ str ++ "' to regex = '" ++ rgx
 
 
 ----- ReadPrec helpers when defining custom Read
