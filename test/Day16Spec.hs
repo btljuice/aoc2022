@@ -3,7 +3,6 @@ module Day16Spec(spec) where
 import Test.Hspec
 import Day16
 import Data.Array((//), (!))
-import Day16 (flowRates)
 
 valveStrs = [
   "Valve AA has flow rate=0; tunnels lead to valves DD, II, BB",
@@ -19,7 +18,7 @@ valveStrs = [
 
 valves = fmap readValve valveStrs
 
-expectedTravelCosts = mkTravelCosts //
+sampleTravelCosts = mkTravelCosts //
   fmap (\(from, to, cost) -> ((mkLabel from, mkLabel to), cost))
   [("AA","BB",1),
    ("AA","CC",2),
@@ -64,7 +63,7 @@ expectedTravelCosts = mkTravelCosts //
    ("JJ","EE",4),
    ("JJ","HH",7)]
 
-expectedFlowRates = mkFlowRates // [
+sampleFlowRates = mkFlowRates // [
  (mkLabel "AA", 0),
  (mkLabel "BB", 13),
  (mkLabel "CC", 2),
@@ -84,10 +83,19 @@ spec = do
       last valves `shouldBe` mkValve "JJ" 21 ["II"]
 
   describe "travelCosts" $ do
-    it "should equal expectedTravelCosts" $ do
-      travelCosts valves `shouldBe` expectedTravelCosts
+    it "should equal sampleTravelCosts" $ do
+      travelCosts valves `shouldBe` sampleTravelCosts
 
   describe "flowRates" $ do
     it "should equal expected value" $ do
-      flowRates valves`shouldBe` expectedFlowRates
+      flowRates valves`shouldBe` sampleFlowRates
+
+  describe "pathFlowRate" $ do
+    it "should equal to 1651" $ do
+      let path = fmap mkLabel ["AA", "DD", "BB", "JJ", "HH", "EE", "CC"]
+      pathFlowRate sampleFlowRates sampleTravelCosts path 30 `shouldBe` 1651
+
+  describe "bestFlowRate" $ do
+    it "should equal to 1651" $ do
+      bestFlowRate valves  `shouldBe` 1651
 

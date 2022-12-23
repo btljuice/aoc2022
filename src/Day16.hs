@@ -8,6 +8,9 @@ module Day16 (
   mkTravelCosts,
   mkFlowRates,
   flowRates,
+  pathFlowRate,
+  bestFlowRate,
+  day16part1,
 ) where
 
 import Lib(submatches3, shortestPath)
@@ -16,6 +19,7 @@ import Data.Array(Array, Ix, (//), (!))
 import qualified Data.Array as Array
 import qualified Text.Read
 import Data.Hashable(Hashable, hashWithSalt)
+import Data.List (permutations)
 
 -- 30 minutes before volcano erupts
 -- valves
@@ -114,10 +118,14 @@ pathFlowRate frs tcs (p0:p1:t) m
         fr = frs ! p1
         m' = m - tc - 1  -- 1 minute removed because valve is opening
 
--- bestPath valves =
---   where paths :: [[Label]]
---         paths = Data.Permutations . non0Labels $ valves
---         costs = travelCosts valves
+bestFlowRate :: [Valve] -> Int
+bestFlowRate valves = maximum . fmap (\p -> pathFlowRate frs tcs p 30) . paths $ valves
+  where paths = fmap (startLabel:) . permutations . non0Labels
+        tcs = travelCosts valves
+        frs = flowRates valves
+
+day16part1 :: [String] -> Int
+day16part1 = bestFlowRate . fmap readValve
 
 -- cost
 -- 1 minute opening a valve
