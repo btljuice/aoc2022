@@ -54,6 +54,8 @@ library
     , directory
     , extra
     , ghc
+    , hashable
+    , hashmap
     , hspec
     , regex-compat
     , regex-tdfa
@@ -78,6 +80,8 @@ executable aoc2022-haskell-exe
     , directory
     , extra
     , ghc
+    , hashable
+    , hashmap
     , hspec
     , regex-compat
     , regex-tdfa
@@ -122,6 +126,8 @@ test-suite aoc2022-haskell-test
     , directory
     , extra
     , ghc
+    , hashable
+    , hashmap
     , hspec
     , hspec-discover
     , regex-compat

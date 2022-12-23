@@ -2,6 +2,7 @@ module Day16Spec(spec) where
 
 import Test.Hspec
 import Day16
+import Data.Array((//))
 
 valveStrs = [
   "Valve AA has flow rate=0; tunnels lead to valves DD, II, BB",
@@ -17,11 +18,50 @@ valveStrs = [
 
 valves = fmap readValve valveStrs
 
-
-valveShortestPaths :: [(Label, Label, Int)]
-valveShortestPaths =
-  fmap (\ (from, to, l) -> (mkLabel from, mkLabel to, l))
-  [("AA","BB",2),("AA","CC",3),("AA","DD",2),("AA","EE",3),("AA","HH",6),("AA","JJ",3),("BB","AA",2),("BB","CC",2),("BB","DD",3),("BB","EE",4),("BB","HH",7),("BB","JJ",4),("CC","AA",3),("CC","BB",2),("CC","DD",2),("CC","EE",3),("CC","HH",6),("CC","JJ",5),("DD","AA",2),("DD","BB",3),("DD","CC",2),("DD","EE",2),("DD","HH",5),("DD","JJ",4),("EE","AA",3),("EE","BB",4),("EE","CC",3),("EE","DD",2),("EE","HH",4),("EE","JJ",5),("HH","AA",6),("HH","BB",7),("HH","CC",6),("HH","DD",5),("HH","EE",4),("HH","JJ",8),("JJ","AA",3),("JJ","BB",4),("JJ","CC",5),("JJ","DD",4),("JJ","EE",5),("JJ","HH",8)]
+expectedTravelCosts = mkTravelCosts //
+  fmap (\(from, to, cost) -> ((mkLabel from, mkLabel to), cost))
+  [("AA","BB",1),
+   ("AA","CC",2),
+   ("AA","DD",1),
+   ("AA","EE",2),
+   ("AA","HH",5),
+   ("AA","JJ",2),
+   ("BB","AA",1),
+   ("BB","CC",1),
+   ("BB","DD",2),
+   ("BB","EE",3),
+   ("BB","HH",6),
+   ("BB","JJ",3),
+   ("CC","AA",2),
+   ("CC","BB",1),
+   ("CC","DD",1),
+   ("CC","EE",2),
+   ("CC","HH",5),
+   ("CC","JJ",4),
+   ("DD","AA",1),
+   ("DD","BB",2),
+   ("DD","CC",1),
+   ("DD","EE",1),
+   ("DD","HH",4),
+   ("DD","JJ",3),
+   ("EE","AA",2),
+   ("EE","BB",3),
+   ("EE","CC",2),
+   ("EE","DD",1),
+   ("EE","HH",3),
+   ("EE","JJ",4),
+   ("HH","AA",5),
+   ("HH","BB",6),
+   ("HH","CC",5),
+   ("HH","DD",4),
+   ("HH","EE",3),
+   ("HH","JJ",7),
+   ("JJ","AA",2),
+   ("JJ","BB",3),
+   ("JJ","CC",4),
+   ("JJ","DD",3),
+   ("JJ","EE",4),
+   ("JJ","HH",7)]
 
 spec :: Spec
 spec = do
@@ -30,6 +70,6 @@ spec = do
       head valves `shouldBe` mkValve "AA" 0 ["DD", "II", "BB"]
       last valves `shouldBe` mkValve "JJ" 21 ["II"]
 
-  describe "shortestPaths" $ do
-    it "should provide shortest paths for > 0 valves and start label" $ do
-      (fmap (\p -> (head p, last p, length p)) . shortestPaths $ valves) `shouldBe` valveShortestPaths
+  describe "travelCosts" $ do
+    it "should equal expectedTravelCosts" $ do
+      travelCosts valves `shouldBe` expectedTravelCosts

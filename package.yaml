@@ -17,6 +17,8 @@ dependencies:
   - split
   - directory
   - containers
+  - hashmap
+  - hashable
   - array
   - regex-tdfa
   - scanf

@@ -4,24 +4,38 @@ module Day16 (
   Label(..),
   mkValve,
   mkLabel,
-  shortestPaths
+  travelCosts,
+  mkTravelCosts,
 ) where
 
 import Lib(submatches3, shortestPath)
 import Data.List.Split(splitOn)
-import Data.Array(Array, Ix)
+import Data.Array(Array, Ix, (//))
+import qualified Data.HashMap as HashMap
+import qualified Data.Array as Array
 import qualified Text.Read
+import Data.Hashable(Hashable, hashWithSalt)
 
 -- 30 minutes before volcano erupts
 -- valves
 -- valve have flow rates
 -- valves  are connected by tunnels
 
+type FlowRate = Int
 type Cost = Int
 
--- TODO convert to data Label = Label Int
--- make Read and Show for 2 chars
-data Label = Label Int deriving (Eq, Ord, Ix)-- 2 Char has 26*26 = 676 possibilities
+-- Label type. Int is the numerical representation of "[A-Z][A-Z]"
+-- 2 char has 26*26 = 676 possibilities
+
+newtype Label = Label Int deriving (Eq, Ord, Ix)
+
+instance Bounded Label where
+  minBound = mkLabel "AA"
+  maxBound = mkLabel "ZZ"
+
+instance Hashable Label where
+  hashWithSalt s (Label i) = hashWithSalt s i
+
 
 instance Show Label where
   show (Label i) = [a, b]
@@ -39,19 +53,16 @@ mkLabel :: String ->  Label
 mkLabel = read
 
 startLabel = mkLabel "AA"
+lastL = mkLabel "AA"
 
 
-type FlowRate = Int
+-- Valve type
 
 data Valve = Valve Label FlowRate [Label] deriving (Show, Eq)
-
-type TravelCost = Array Label [(Label, Int)]
-
 
 mkValve :: String -> Int  -> [String] -> Valve
 mkValve from flowRate tos = Valve (read from) flowRate (fmap read tos)
 
--- read valve function
 
 posNumberRegex ="[[:digit:]]+"
 labelRegex = "[A-Z][A-Z]"
@@ -62,12 +73,30 @@ readValve str = Valve (read valveLabel) (read flowRate) labels
   where (valveLabel, flowRate, lbls) = submatches3 valveRegex str
         labels = fmap read . splitOn ", " $ lbls
 
-shortestPaths :: [Valve] -> [[Label]]
-shortestPaths valves = filter (\ p -> length p > 1) ( shortestPath edges <$> non0Labels <*> non0Labels )
-  where edges = concat [[(from, to), (to,  from)] | Valve from _ tos <- valves, to <- tos]
-        non0Labels = startLabel : [from | Valve from rate _ <- valves, rate > 0]
+type TravelCosts = Array (Label, Label) Cost
 
--- travelCosts :: [Valve] -> TravelCost
+mkTravelCosts = Array.listArray dim (repeat (maxBound :: Cost))
+  where dim = ((minBound :: Label, minBound :: Label), (maxBound :: Label, maxBound :: Label))
+
+
+non0Labels :: [Valve] -> [Label]
+non0Labels valves = [from | Valve from rate _ <- valves, rate > 0]
+
+shortestPaths :: [Valve] -> [[Label]]
+shortestPaths valves = filter (\ p -> length p > 1) ( shortestPath edges <$> labels <*> labels )
+        -- ASSUMPTION: The valves description is bi-directional
+  where edges = [(to,  from) | Valve from _ tos <- valves, to <- tos]
+        labels = startLabel : non0Labels valves
+
+travelCosts :: [Valve] -> TravelCosts
+travelCosts valves  = mkTravelCosts // (costs valves)
+  where costs = fmap pathCost . shortestPaths
+        pathCost p = ((head p, last p), length p - 1)
+
+-- bestPath valves =
+--   where paths :: [[Label]]
+--         paths = Data.Permutations . non0Labels $ valves
+--         costs = travelCosts valves
 
 -- cost
 -- 1 minute opening a valve
