@@ -6,12 +6,13 @@ module Day16 (
   mkLabel,
   travelCosts,
   mkTravelCosts,
+  mkFlowRates,
+  flowRates,
 ) where
 
 import Lib(submatches3, shortestPath)
 import Data.List.Split(splitOn)
-import Data.Array(Array, Ix, (//))
-import qualified Data.HashMap as HashMap
+import Data.Array(Array, Ix, (//), (!))
 import qualified Data.Array as Array
 import qualified Text.Read
 import Data.Hashable(Hashable, hashWithSalt)
@@ -26,7 +27,7 @@ type Cost = Int
 
 -- Label type. Int is the numerical representation of "[A-Z][A-Z]"
 -- 2 char has 26*26 = 676 possibilities
-
+-- TODO Assign a unique id to each valve to further reduce dimension
 newtype Label = Label Int deriving (Eq, Ord, Ix)
 
 instance Bounded Label where
@@ -53,8 +54,6 @@ mkLabel :: String ->  Label
 mkLabel = read
 
 startLabel = mkLabel "AA"
-lastL = mkLabel "AA"
-
 
 -- Valve type
 
@@ -74,7 +73,17 @@ readValve str = Valve (read valveLabel) (read flowRate) labels
         labels = fmap read . splitOn ", " $ lbls
 
 type TravelCosts = Array (Label, Label) Cost
+type FlowRates = Array Label FlowRate
 
+mkFlowRates :: FlowRates
+mkFlowRates = Array.listArray dim (repeat (maxBound :: FlowRate))
+  where dim = (minBound :: Label, maxBound :: Label)
+
+flowRates :: [Valve] -> FlowRates
+flowRates valves = mkFlowRates  // fmap (\ (Valve l fr _) -> (l, fr)) valves
+
+
+mkTravelCosts :: TravelCosts
 mkTravelCosts = Array.listArray dim (repeat (maxBound :: Cost))
   where dim = ((minBound :: Label, minBound :: Label), (maxBound :: Label, maxBound :: Label))
 
@@ -89,9 +98,21 @@ shortestPaths valves = filter (\ p -> length p > 1) ( shortestPath edges <$> lab
         labels = startLabel : non0Labels valves
 
 travelCosts :: [Valve] -> TravelCosts
-travelCosts valves  = mkTravelCosts // (costs valves)
+travelCosts valves  = mkTravelCosts // costs valves
   where costs = fmap pathCost . shortestPaths
         pathCost p = ((head p, last p), length p - 1)
+
+pathFlowRate :: FlowRates -> TravelCosts ->  [Label]  -> Int -> Int
+pathFlowRate _  _ _ 1 = 0 -- takes 1 minute to open a valve
+pathFlowRate _  _ _ 0 = 0
+pathFlowRate _  _ [] _ = 0
+pathFlowRate _  _ [_] _ = 0
+pathFlowRate frs tcs (p0:p1:t) m
+  | m' <= 0 = 0
+  | otherwise = m'*fr + pathFlowRate frs tcs (p1:t) m'
+  where tc = tcs ! (p0, p1)
+        fr = frs ! p1
+        m' = m - tc - 1  -- 1 minute removed because valve is opening
 
 -- bestPath valves =
 --   where paths :: [[Label]]

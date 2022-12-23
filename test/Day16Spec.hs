@@ -2,7 +2,8 @@ module Day16Spec(spec) where
 
 import Test.Hspec
 import Day16
-import Data.Array((//))
+import Data.Array((//), (!))
+import Day16 (flowRates)
 
 valveStrs = [
   "Valve AA has flow rate=0; tunnels lead to valves DD, II, BB",
@@ -63,6 +64,18 @@ expectedTravelCosts = mkTravelCosts //
    ("JJ","EE",4),
    ("JJ","HH",7)]
 
+expectedFlowRates = mkFlowRates // [
+ (mkLabel "AA", 0),
+ (mkLabel "BB", 13),
+ (mkLabel "CC", 2),
+ (mkLabel "DD", 20),
+ (mkLabel "EE", 3),
+ (mkLabel "FF", 0),
+ (mkLabel "GG", 0),
+ (mkLabel "HH", 22),
+ (mkLabel "II", 0),
+ (mkLabel "JJ", 21) ]
+
 spec :: Spec
 spec = do
   describe "readValve" $ do
@@ -73,3 +86,8 @@ spec = do
   describe "travelCosts" $ do
     it "should equal expectedTravelCosts" $ do
       travelCosts valves `shouldBe` expectedTravelCosts
+
+  describe "flowRates" $ do
+    it "should equal expected value" $ do
+      flowRates valves`shouldBe` expectedFlowRates
+
